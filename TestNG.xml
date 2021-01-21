@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="MastCardAutoTestSuite">
+	<test name="MastCardAutoTestSuite" parallel="methods" thread-count="2">
+		<parameter name="baseURL" value="http://52.174.95.61:5000/"/>
+  		<parameter name="browserType" value="Chrome"/>
+  		<classes>
+      			<class name="website.mastercard.tc.MasterCardTestCases">
+      			<methods>
+      				<include name="tcLaunchMasterCard"/>
+      				<include name="tcLaunchMasterCard2"/>
+      			</methods>
+      		</class>      		
+    	</classes>
+  	</test>
+</suite>
