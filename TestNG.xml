@@ -2,13 +2,15 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="MastCardAutoTestSuite">
 	<test name="MastCardAutoTestSuite" parallel="methods" thread-count="2">
-		<parameter name="baseURL" value="http://52.174.95.61:5000/"/>
-  		<parameter name="browserType" value="Chrome"/>
+		<parameter name="baseURL" value="https://www.javatpoint.com/"/>
+		<parameter name="browserType" value="Chrome"/>
   		<classes>
-      			<class name="website.mastercard.tc.MasterCardTestCases">
+      			<class name="website.javaTPoint.tc.JavaTPointTestCases">
       			<methods>
-      				<include name="tcLaunchMasterCard"/>
-      				<include name="tcLaunchMasterCard2"/>
+      				<!-- <include name="tcLaunchJavaTPoint"/> -->
+      				<include name="tcSeleniumTabNavigation"/>
+					<!-- <include name="tcTestGetRequest"/> -->
+					<include name="tcTestValidateUserMailIDExistence"/>
       			</methods>
       		</class>      		
     	</classes>

@@ -1,16 +1,21 @@
-package com.mastercard.config;
+package com.javaTPoint.config;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,19 +23,25 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.intuit.karate.driver.firefox.GeckoWebDriver;
+import com.sun.speech.freetts.VoiceManager;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+import com.sun.speech.freetts.VoiceManager;
 
 public class GenericFunctions
 {
 	static String strFilePath=null;
 	String strLocation=null;
-	static FileInputStream fis=null;
 	WebDriver driver;
 	String strOSName=null;
+	static com.sun.speech.freetts.Voice systemVoice = null;
+	static FileInputStream fis=null;
+	static XSSFWorkbook wb=null;
 	public GenericFunctions()
 	{
 		strOSName=System.getProperty("os.name", "generic");
@@ -60,47 +71,42 @@ public class GenericFunctions
 	}
 	private WebDriver initChromeDriver() throws InterruptedException 
 	{
-		ChromeOptions objOptions=new ChromeOptions();
-		HashMap<String, Object>prefs=new HashMap<String, Object>();
-		prefs.put("profile.default_content_setting.popups", 0);
-		prefs.put("profile.default_content_setting_values.notifications", 2);
-		prefs.put("safebrowsing.enabled", true);
-		LoggingPreferences logPrefs=new LoggingPreferences();
-		logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
-		objOptions.addArguments("disable-infobars");
-		objOptions.setExperimentalOption("prefs", prefs);
-		objOptions.addArguments("--start-maximized");
-		objOptions.addArguments("--dns-prefetch-disable");
-		objOptions.addArguments("safebrowsing-disable-extension-blacklist");
-		objOptions.setExperimentalOption("useAutomationExtension", false);
-		objOptions.setExperimentalOption("excludeSwitches",Collections.singletonList("enable-automation")); 
-		objOptions.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
-		if(strOSName.contains("Windows"))
+		WebDriverManager.chromedriver().setup();
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--start-maximized");
+		options.addArguments("disable-infobars");
+		driver = new ChromeDriver(options);
+		//options.addArguments("--unsafely-treat-insecure-origin-as-secure=http://51.145.239.109:5000/");
+		/*if(strOSName.contains("Windows"))
 		{
 			System.setProperty("webdriver.chrome.driver", (System.getProperty("user.dir")+ "/browsers/chromedriver.exe"));
-			driver = new ChromeDriver(objOptions);
+			driver = new ChromeDriver(options);
 		}
 		else
 		{
 			System.setProperty("webdriver.chrome.driver", (System.getProperty("user.dir")+ "/browsers/chromedriver"));
-			driver = new ChromeDriver(objOptions);
-		}
+			driver = new ChromeDriver(options);
+		}*/
 		return driver;
 	}
 	private WebDriver initFirefoxDriver() 
 	{
-		try
+		WebDriverManager.firefoxdriver().setup();
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--start-maximized");
+		options.addArguments("disable-infobars");
+		driver = new FirefoxDriver();
+		//options.addArguments("--unsafely-treat-insecure-origin-as-secure=http://51.145.239.109:5000/");
+		/*if(strOSName.contains("Windows"))
 		{
-			if(strOSName.equalsIgnoreCase("Windows"))
-				System.setProperty("webdriver.gecko.driver", (System.getProperty("user.dir")+"/browsers/geckodriver.exe"));
-			else
-				System.setProperty("webdriver.gecko.driver", (System.getProperty("user.dir")+"/browsers/geckodriverLinux"));
-			driver = new FirefoxDriver();
+			System.setProperty("webdriver.chrome.driver", (System.getProperty("user.dir")+ "/browsers/chromedriver.exe"));
+			driver = new ChromeDriver(options);
 		}
-		catch(Exception e)
+		else
 		{
-			e.printStackTrace();
-		}
+			System.setProperty("webdriver.chrome.driver", (System.getProperty("user.dir")+ "/browsers/chromedriver"));
+			driver = new ChromeDriver(options);
+		}*/
 		return driver;
 	}
 	private WebDriver initEdgeDriver() 
@@ -187,11 +193,12 @@ public class GenericFunctions
 		else
 			wait.until(ExpectedConditions.invisibilityOf((ele)));
 	}
-	public String getTextEle(WebElement ele)
+	public String getEleText(WebElement ele)
     {
-    	JavascriptExecutor jse = (JavascriptExecutor)driver;
-    	String strText = jse.executeScript("return arguments[0].text;", ele).toString();
-    	return strText;
+    	/*JavascriptExecutor jse = (JavascriptExecutor)driver;
+    	String strText = jse.executeScript("return arguments[0].text;", ele).toString();*/
+		System.out.println(ele.getText());
+    	return ele.getText();
     }
 	public void selectListEleByText(List<WebElement> ele, String strText)
     {
@@ -200,6 +207,7 @@ public class GenericFunctions
 	    	for (WebElement option : ele) 
 	 	   	{
 	    		String strActual=option.getText().toLowerCase().trim();
+	    		System.out.println(strActual);
 	    		String strExpected=strText.toLowerCase().trim();
 				if(strActual.contains(strExpected))
 				{
@@ -213,5 +221,73 @@ public class GenericFunctions
     	{
     		System.out.println(e.getMessage());
     	}
+    }
+	public static void allocate(String strText){
+        systemVoice = VoiceManager.getInstance().getVoice(strText);
+        systemVoice.allocate();
+    }
+     
+    public static void speak(String text){
+        systemVoice.speak(text);
+    }
+     
+    public static void deallocate(){
+        systemVoice.deallocate();
+    }
+    public static String getData(String strSheetName, String strColumnTitle, String strTCNumber) throws IOException
+	{
+		String strColumnValue=null;
+		int intColNo=0;
+		strFilePath=System.getProperty("user.dir")+"/TestData/TestData.xlsx";
+		File file=new File(strFilePath);
+		try					
+		{
+			fis=new FileInputStream(file);
+			wb = new XSSFWorkbook(fis);
+			Sheet sheet=wb.getSheetAt(0);
+			Iterator<Row> rowIterator = sheet.iterator(); 
+	        while (rowIterator.hasNext()) 
+	        {
+	            Row row = rowIterator.next(); 
+	            Iterator<Cell> cellIterator = row.cellIterator();
+	            while (cellIterator.hasNext()) 
+	            {
+	                Cell cell = cellIterator.next();
+	                if(row.getRowNum()>0)
+	                {
+	                	if(cell.getColumnIndex()==intColNo)
+						{
+	                		strColumnValue=cell.getStringCellValue();
+	                		break;
+						}
+	                }
+	          }
+	     }    
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally 
+		{
+			wb.close();
+			fis.close();
+		}
+		return strColumnValue;
+	}
+    public boolean eleExist(WebElement ele)
+    {
+    	boolean flag=false;
+    	try
+    	{
+    		 if(ele.isDisplayed())
+    			 flag=true;
+    		 
+    	}
+    	catch(NoSuchElementException e)
+    	{
+    		 System.out.println("Element does not exist");
+    	}
+    	return flag;
     }
 }

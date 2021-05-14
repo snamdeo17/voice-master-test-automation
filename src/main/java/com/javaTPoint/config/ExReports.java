@@ -1,4 +1,4 @@
-package com.mastercard.config;
+package com.javaTPoint.config;
 
 
 import java.io.File;
@@ -19,10 +19,10 @@ public class ExReports
 			SimpleDateFormat sdfDate = new SimpleDateFormat("ddMMyy_HHmm");
 	        Date now = new Date();
 	        String strDate = sdfDate.format(now);
-	        extent = new ExtentReports(System.getProperty("user.dir") +"/TestReports/MasterCard"+strDate+".html", false);
+	        extent = new ExtentReports(System.getProperty("user.dir") +"/TestReports/Xornet"+strDate+".html", false);
 			extent
-	        .addSystemInfo("Host Name", "MasterCard")
-	        .addSystemInfo("Environment", "MasterCard QA");
+	        .addSystemInfo("Host Name", "Xornet")
+	        .addSystemInfo("Environment", "Xornet QA");
 	        extent.loadConfig(new File(System.getProperty("user.dir")+"/extent-config.xml"));
 		}
 		catch(Exception e)
