@@ -73,6 +73,7 @@ public class GenericFunctions
 		options.addArguments("disable-infobars");
 		driver = new ChromeDriver(options);
 		System.out.println("Hari");
+		System.out.println("Ram");
 		//options.addArguments("--unsafely-treat-insecure-origin-as-secure=http://51.145.239.109:5000/");
 		/*if(strOSName.contains("Windows"))
 		{
