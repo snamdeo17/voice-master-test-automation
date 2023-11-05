@@ -25,12 +25,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.intuit.karate.driver.firefox.GeckoWebDriver;
 import com.sun.speech.freetts.VoiceManager;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
-
 import com.sun.speech.freetts.VoiceManager;
 
 public class GenericFunctions
@@ -76,6 +72,7 @@ public class GenericFunctions
 		options.addArguments("--start-maximized");
 		options.addArguments("disable-infobars");
 		driver = new ChromeDriver(options);
+		System.out.println("Hari");
 		//options.addArguments("--unsafely-treat-insecure-origin-as-secure=http://51.145.239.109:5000/");
 		/*if(strOSName.contains("Windows"))
 		{
